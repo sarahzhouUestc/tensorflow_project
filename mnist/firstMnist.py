@@ -50,7 +50,7 @@ def train(mnist):
     y_average=inference(x,ema,weights1,biases1,weights2,biases2)
 
     #非滑动平均值的结果与标准答案的交叉熵
-    cross_entropy=tf.nn.sparse_softmax_cross_entropy_with_logits(y,tf.arg_max(y_,axis=1))
+    cross_entropy=tf.nn.sparse_softmax_cross_entropy_with_logits(logits=y,labels=tf.argmax(y_,axis=1))
     cross_entropy_mean=tf.reduce_mean(cross_entropy)
 
     #-----------以下将使用L2正则化------------
@@ -77,17 +77,17 @@ def train(mnist):
         for i in range(steps):
             if i%1000==0:
                 validation_acc=sess.run(accuracy_average,feed_dict=validation_feed)
-                print("After %d training step(s), validation accuracy using average model is %g") % (i,validation_acc)
+                print("After %d training step(s), validation accuracy using average model is %g" % (i,validation_acc))
             xt,yt=mnist.train.next_batch(batch_size)
             sess.run(train_op,feed_dict={x:xt,y_:yt})
         #训练结束后，使用测试集得出最终的正确率
         test_acc=sess.run(accuracy_average,feed_dict=test_feed)
-        print("After %d training step(s), test accuracy using average model is %g" % (steps,test_acc))
+        print("After %d training step(s), test accuracy using average model is %f" % (steps,test_acc))
 
-    def main(argv=None):
-        mnist=input_data.read_data_sets("/tmp/data",one_hot=True)
-        train(mnist)
+def main(argv=None):
+    mnist=input_data.read_data_sets("/tmp/data",one_hot=True)
+    train(mnist)
 
-    # tf.app.run()是tensorflow提供的主程序入口，会调用上面定义的main函数
-    if __name__ == '__main__':
-        tf.app.run()
+# tf.app.run()是tensorflow提供的主程序入口，会调用上面定义的main函数
+if __name__ == '__main__':
+    tf.app.run()
