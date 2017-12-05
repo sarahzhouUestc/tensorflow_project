@@ -12,9 +12,11 @@ EVAL_INTERNAL_SECS=10
 
 def evaluate(mnist):
     with tf.Graph().as_default() as g:
-        x=tf.placeholder(tf.float32,[None,mnist_inference.INPUT_NODE],name="x-input")
+        x=tf.placeholder(tf.float32,[None,mnist_inference.IMAGE_SIZE,mnist_inference.IMAGE_SIZE,mnist_inference.NUM_CHANNELS],name="x-input")
         y_=tf.placeholder(tf.float32,[None,mnist_inference.OUTPUT_NODE],name="y-input")
         validate_feed={x:mnist.validation.images, y_:mnist.validation.labels}
+
+
         #测试时不关心正则化损失的值，因为正则化损失是用来解决过拟合的
         y=mnist_inference.inference(x,None)
         correct_prediction=tf.equal(tf.argmax(y,1),tf.argmax(y_,1))
